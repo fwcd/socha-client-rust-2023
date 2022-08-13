@@ -2,7 +2,7 @@ use crate::util::Element;
 
 use super::RequestPayload;
 
-const GAME_TYPE: &str = "swc_2023_ostseeschach";
+const GAME_TYPE: &str = "swc_2023_penguins";
 
 /// A message from the client.
 #[derive(Debug, Clone)]
