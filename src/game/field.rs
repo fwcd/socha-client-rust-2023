@@ -24,8 +24,8 @@ impl Field {
     }
 
     /// Creates a new field with the given penguin.
-    pub fn with_penguin(penguin: Team) -> Self {
-        Self { penguin: Some(penguin), ..Default::default() }
+    pub fn with_penguin(team: Team) -> Self {
+        Self { penguin: Some(team), ..Default::default() }
     }
 
     /// Whether the field is empty.
@@ -39,6 +39,18 @@ impl Field {
 
     /// The penguin on this field.
     pub fn penguin(self) -> Option<Team> { self.penguin }
+}
+
+impl From<usize> for Field {
+    fn from(fish: usize) -> Self {
+        Self::with_fish(fish)
+    }
+}
+
+impl From<Team> for Field {
+    fn from(team: Team) -> Self {
+        Self::with_penguin(team)
+    }
 }
 
 impl TryFrom<&Element> for Field {
