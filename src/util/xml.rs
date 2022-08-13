@@ -213,6 +213,14 @@ impl<'a> ElementBuilder<'a> {
         self.childs.push(child.into());
         self
     }
+
+    /// Adds the specified child if present.
+    pub fn option_child(mut self, child: Option<impl Into<Element>>) -> Self {
+        if let Some(child) = child {
+            self.childs.push(child.into());
+        }
+        self
+    }
     
     /// Tries adding the specified child.
     pub fn try_child(mut self, child: impl TryInto<Element, Error=SCError>) -> SCResult<Self> {

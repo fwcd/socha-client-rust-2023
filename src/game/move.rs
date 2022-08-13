@@ -44,3 +44,13 @@ impl TryFrom<&Element> for Move {
         })
     }
 }
+
+impl From<Move> for Element {
+    fn from(m: Move) -> Self {
+        Element::new("data")
+            .attribute("class", "move")
+            .option_child(m.from.map(|v| Element::new("from").attribute("x", v.x).attribute("y", v.y)))
+            .child(Element::new("to").attribute("x", m.to.x).attribute("y", m.to.y))
+            .build()
+    }
+}
