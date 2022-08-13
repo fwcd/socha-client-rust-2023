@@ -66,3 +66,49 @@ impl From<Move> for Element {
             .build()
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use std::str::FromStr;
+
+    use crate::{util::Element, game::{Move, Vec2}};
+
+    #[test]
+    fn test_parsing_placing_move() {
+        assert_eq!(Move::try_from(&Element::from_str(r#"
+            <data class="move">
+                <to x="13" y="11"/>
+            </data>
+        "#).unwrap()).unwrap(), Move {
+            from: None,
+            to: Vec2::new(13, 11),
+        });
+    }
+
+    #[test]
+    fn test_parsing_move() {
+        assert_eq!(Move::try_from(&Element::from_str(r#"
+            <data class="move">
+                <from x="3" y="5"/>
+                <to x="7" y="5"/>
+            </data>
+        "#).unwrap()).unwrap(), Move {
+            from: Some(Vec2::new(3, 5)),
+            to: Vec2::new(7, 5),
+        });
+    }
+
+    #[test]
+    fn test_formatting_move() {
+        assert_eq!(Element::from(Move {
+            from: Some(Vec2::new(2, 3)),
+            to: Vec2::new(4, 1),
+        }), Element::from_str(r#"
+            <data class="move">
+                <from x="2" y="3"/>
+                <to x="4" y="1"/>
+            </data>
+        "#).unwrap());
+    }
+}
