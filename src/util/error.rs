@@ -2,6 +2,7 @@ use std::io::Error as IoError;
 use std::str::{ParseBoolError, Utf8Error};
 use std::num::{ParseIntError, ParseFloatError};
 use quick_xml::Error as XmlError;
+use quick_xml::events::attributes::AttrError;
 
 use super::Element;
 
@@ -47,6 +48,10 @@ impl From<Utf8Error> for SCError {
 
 impl From<XmlError> for SCError {
     fn from(error: XmlError) -> Self { Self::Xml(error) }
+}
+
+impl From<AttrError> for SCError {
+    fn from(error: AttrError) -> Self { Self::Xml(error.into()) }
 }
 
 impl From<String> for SCError {

@@ -1,5 +1,7 @@
 // Port of https://github.com/software-challenge/backend/blob/a3145a91749abb73ca5ffd426fd2a77d9a90967a/plugin/src/main/kotlin/sc/plugin2023/Move.kt
 
+use std::fmt;
+
 use crate::util::{Element, SCError, SCResult};
 
 use super::Vec2;
@@ -23,7 +25,7 @@ impl Move {
     }
 
     /// Convenience constructor for creating a move placing a penguin.
-    pub fn placing_at(pos: Vec2) -> Self {
+    pub fn placing(pos: Vec2) -> Self {
         Self::new(None, pos)
     }
 
@@ -32,6 +34,16 @@ impl Move {
 
     /// The target position of the penguin.
     pub fn to(self) -> Vec2 { self.to }
+}
+
+impl fmt::Display for Move {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if let Some(from) = self.from {
+            write!(f, "{} -> {}", from, self.to)
+        } else {
+            write!(f, "-> {}", self.to)
+        }
+    }
 }
 
 impl TryFrom<&Element> for Move {

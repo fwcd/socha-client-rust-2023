@@ -32,6 +32,18 @@ impl State {
 
     /// Fetches the starting team.
     pub fn start_team(&self) -> Option<Team> { self.start_team }
+
+    /// The current team, computed from the starting team and the turn.
+    pub fn current_team(&self) -> Option<Team> {
+        let start_team = self.start_team?;
+        let team = if self.turn % 2 == 0 { start_team } else { start_team.opponent() };
+        Some(team)
+    }
+
+    /// Fetches the possible moves.
+    pub fn possible_moves(&self) -> Vec<Move> {
+        todo!()
+    }
 }
 
 impl TryFrom<&Element> for State {
