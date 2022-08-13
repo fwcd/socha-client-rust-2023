@@ -14,7 +14,7 @@ pub enum Doubled {}
 /// Either uses direct or doubled hex coordinates.
 /// (see https://www.redblobgames.com/grids/hexagons/#coordinates-doubled).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Vec2<C = Direct> where C: Copy {
+pub struct Vec2<C> where C: Copy {
     pub x: i32,
     pub y: i32,
     phantom: PhantomData<C>,
