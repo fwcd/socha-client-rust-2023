@@ -12,18 +12,16 @@ pub struct Board {
 
 impl Default for Board {
     fn default() -> Self {
-        Self::empty()
+        Self::EMPTY
     }
 }
 
 impl Board {
-    /// Creates an empty board.
-    pub fn empty() -> Self {
-        Self { fields: [Field::default(); BOARD_FIELDS] }
-    }
+    /// The empty board.
+    pub const EMPTY: Self = Self { fields: [Field::EMPTY; BOARD_FIELDS] };
 
     /// Creates a new board with the given fields.
-    pub fn new(fields: [Field; BOARD_FIELDS]) -> Self {
+    pub const fn new(fields: [Field; BOARD_FIELDS]) -> Self {
         Self { fields }
     }
 }

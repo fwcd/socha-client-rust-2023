@@ -1,47 +1,39 @@
-use std::{fmt, ops::{Add, Sub, Mul, Div, DivAssign, MulAssign}};
+use std::{fmt, ops::{Add, Sub, Mul, Div, DivAssign, MulAssign}, marker::PhantomData};
 
 use crate::util::{Element, SCError, SCResult};
 
-/// The four vectors in cardinal direction.
-pub const CARDINALS: [Vec2; 4] = [
-    Vec2 { x: -1, y:  0 },
-    Vec2 { x:  1, y:  0 },
-    Vec2 { x:  0, y: -1 },
-    Vec2 { x:  0, y:  1 },
-];
+/// Marker type for direct coordinates.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum Direct {}
 
-/// The four vectors in diagonal direction.
-pub const DIAGONALS: [Vec2; 4] = [
-    Vec2 { x: -1, y: -1 },
-    Vec2 { x: -1, y:  1 },
-    Vec2 { x:  1, y: -1 },
-    Vec2 { x:  1, y:  1 },
-];
+/// Marker type for doubled coordinates.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum Doubled {}
 
 /// A position on the board or 2D integer vector.
+/// Either uses direct or doubled hex coordinates.
+/// (see https://www.redblobgames.com/grids/hexagons/#coordinates-doubled).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Vec2 {
+pub struct Vec2<C = Direct> where C: Copy {
     pub x: i32,
     pub y: i32,
+    phantom: PhantomData<C>,
 }
 
-impl Default for Vec2 {
+impl<C> Default for Vec2<C> where C: Copy {
     fn default() -> Self {
-        Self::zero()
+        Self::ZERO
     }
 }
 
-impl Vec2 {
+impl<C> Vec2<C> where C: Copy {
     /// The coordinate origin, i.e. (0, 0).
-    #[inline]
-    pub fn zero() -> Self {
-        Self::new(0, 0)
-    }
+    pub const ZERO: Self = Self::new(0, 0);
 
     /// Creates a new vector from the given x- and y-components.
     #[inline]
-    pub fn new(x: i32, y: i32) -> Self {
-        Self { x, y }
+    pub const fn new(x: i32, y: i32) -> Self {
+        Self { x, y, phantom: PhantomData }
     }
 
     /// The area of the rectangle spanned by this vector.
@@ -55,6 +47,38 @@ impl Vec2 {
     /// The length of this vector.
     #[inline]
     pub fn length(self) -> f32 { (self.squared_length() as f32).sqrt() }
+}
+
+impl Vec2<Direct> {
+    /// The four vectors in cardinal direction.
+    pub const CARDINALS: [Self; 4] = [
+        Self::new(-1,  0),
+        Self::new( 1,  0),
+        Self::new( 0, -1),
+        Self::new( 0,  1),
+    ];
+
+    /// The four vectors in diagonal direction.
+    pub const DIAGONALS: [Self; 4] = [
+        Self::new(-1, -1),
+        Self::new(-1,  1),
+        Self::new( 1, -1),
+        Self::new( 1,  1),
+    ];
+}
+
+impl From<Vec2<Doubled>> for Vec2<Direct> {
+    /// Converts this vector to doubled hex coordinates.
+    fn from(v: Vec2<Doubled>) -> Self {
+        Self::new(v.x * 2 + v.y % 2, v.y)
+    }
+}
+
+impl From<Vec2<Direct>> for Vec2<Doubled> {
+    /// Converts this vector to doubled hex coordinates.
+    fn from(v: Vec2<Direct>) -> Self {
+        Self::new(v.x / 2, v.y)
+    }
 }
 
 impl Add for Vec2 {

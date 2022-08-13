@@ -135,7 +135,7 @@ impl<D> SCClient<D> where D: SCClientDelegate {
                         },
                         EventPayload::MoveRequest => {
                             let state = state.as_ref().ok_or_else(|| SCError::InvalidState("No state available at move request!".to_owned()))?;
-                            let team = state.current_team().ok_or_else(|| SCError::InvalidState("No team available at move request!".to_owned()))?;
+                            let team = state.current_team();
                             let new_move = self.delegate.request_move(state, team);
                             let request = Request::Room { room_id, payload: RequestPayload::Move(new_move) };
                             let request_xml = Element::from(request);

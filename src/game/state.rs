@@ -16,7 +16,7 @@ pub struct State {
     /// The most recent move.
     last_move: Option<Move>,
     /// The starting team.
-    start_team: Option<Team>,
+    start_team: Team,
 }
 
 impl State {
@@ -33,13 +33,21 @@ impl State {
     pub fn last_move(&self) -> Option<Move> { self.last_move }
 
     /// Fetches the starting team.
-    pub fn start_team(&self) -> Option<Team> { self.start_team }
+    pub fn start_team(&self) -> Team { self.start_team }
 
     /// The current team, computed from the starting team and the turn.
-    pub fn current_team(&self) -> Option<Team> {
-        let start_team = self.start_team?;
-        let team = if self.turn % 2 == 0 { start_team } else { start_team.opponent() };
-        Some(team)
+    pub fn current_team_from_turn(&self) -> Team {
+        if self.turn % 2 == 0 {
+            self.start_team
+        } else {
+            self.start_team.opponent()
+        }
+    }
+
+    /// The current team.
+    pub fn current_team(&self) -> Team {
+        // TODO
+        self.current_team_from_turn()
     }
 
     /// Fetches the possible moves.
@@ -61,7 +69,7 @@ impl TryFrom<&Element> for State {
                 .try_into()
                 .map_err(|e| SCError::from(format!("State has wrong number of fish teams: {:?}", e)))?,
             last_move: elem.child_by_name("lastMove").ok().and_then(|m| m.try_into().ok()),
-            start_team: elem.child_by_name("startTeam").ok().and_then(|t| t.content().parse().ok()),
+            start_team: elem.child_by_name("startTeam")?.content().parse()?,
         })
     }
 }
@@ -168,11 +176,11 @@ mod tests {
                 </fishes>
             </state>
         "#).unwrap()).unwrap(), State {
-            board: Board::empty(),
+            board: Board::EMPTY,
             turn: 1,
             fish: [1, 0],
             last_move: Some(Move::placing(Vec2::new(13, 5))),
-            start_team: Some(Team::One),
+            start_team: Team::One,
         });
     }
 }

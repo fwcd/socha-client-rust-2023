@@ -13,19 +13,22 @@ pub struct Field {
 
 impl Default for Field {
     fn default() -> Self {
-        Self { fish: 0, penguin: None }
+        Self::EMPTY
     }
 }
 
 impl Field {
+    /// The empty field.
+    pub const EMPTY: Self = Self { fish: 0, penguin: None };
+
     /// Creates a new field with the given fish.
-    pub fn with_fish(fish: usize) -> Self {
-        Self { fish, ..Default::default() }
+    pub const fn with_fish(fish: usize) -> Self {
+        Self { fish, ..Self::EMPTY }
     }
 
     /// Creates a new field with the given penguin.
-    pub fn with_penguin(team: Team) -> Self {
-        Self { penguin: Some(team), ..Default::default() }
+    pub const fn with_penguin(team: Team) -> Self {
+        Self { penguin: Some(team), ..Self::EMPTY }
     }
 
     /// Whether the field is empty.
