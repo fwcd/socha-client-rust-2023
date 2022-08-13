@@ -17,6 +17,22 @@ pub struct State {
     start_team: Option<Team>,
 }
 
+impl State {
+    /// Fetches the board.
+    pub fn board(&self) -> &Board { &self.board }
+
+    /// Fetches the turn of the game.
+    pub fn turn(&self) -> usize { self.turn }
+
+    /// Fetches the fish for the given team.
+    pub fn fish(&self, team: Team) -> usize { self.fish[team.index()] }
+
+    /// Fetches the most recent move.
+    pub fn last_move(&self) -> Option<Move> { self.last_move }
+
+    /// Fetches the starting team.
+    pub fn start_team(&self) -> Option<Team> { self.start_team }
+}
 
 impl TryFrom<&Element> for State {
     type Error = SCError;

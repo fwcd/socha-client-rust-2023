@@ -12,7 +12,7 @@ pub enum Team {
 
 impl Team {
     /// The team's index.
-    pub fn index(self) -> i32 {
+    pub fn index(self) -> usize {
         match self {
             Team::One => 0,
             Team::Two => 1,
