@@ -22,8 +22,15 @@ impl Move {
     }
 
     /// Convenience constructor for creating a move of a penguin between two fields.
-    pub fn between(from: Vec2, to: Vec2) -> Self {
-        Self::new(Some(from), to)
+    pub fn between(from: impl Into<Vec2>, to: impl Into<Vec2>) -> Self {
+        Self::new(Some(from.into()), to.into())
+    }
+
+    /// Convenience constructor for creating a move of a penguin into a certain direction.
+    pub fn sliding(from: impl Into<Vec2>, by: impl Into<Vec2>) -> Self {
+        let from = from.into();
+        let by = by.into();
+        Self::between(from, from + by)
     }
 
     /// Convenience constructor for creating a move placing a penguin.

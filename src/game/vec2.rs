@@ -105,7 +105,7 @@ impl From<Vec2<Direct>> for Vec2<Doubled> {
     }
 }
 
-impl Add for Vec2 {
+impl<C> Add for Vec2<C> where C: Copy {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self {
@@ -113,7 +113,7 @@ impl Add for Vec2 {
     }
 }
 
-impl Sub for Vec2 {
+impl<C> Sub for Vec2<C> where C: Copy {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self {
@@ -121,7 +121,7 @@ impl Sub for Vec2 {
     }
 }
 
-impl Mul<i32> for Vec2 {
+impl<C> Mul<i32> for Vec2<C> where C: Copy {
     type Output = Self;
 
     fn mul(self, rhs: i32) -> Self {
@@ -129,22 +129,22 @@ impl Mul<i32> for Vec2 {
     }
 }
 
-impl Mul<Vec2> for i32 {
-    type Output = Vec2;
+impl<C> Mul<Vec2<C>> for i32 where C: Copy {
+    type Output = Vec2<C>;
 
-    fn mul(self, rhs: Vec2) -> Vec2 {
+    fn mul(self, rhs: Vec2<C>) -> Vec2<C> {
         Vec2::new(self * rhs.x, self * rhs.y)
     }
 }
 
-impl MulAssign<i32> for Vec2 {
+impl<C> MulAssign<i32> for Vec2<C> where C: Copy {
     fn mul_assign(&mut self, rhs: i32) {
         self.x *= rhs;
         self.y *= rhs;
     }
 }
 
-impl Div<i32> for Vec2 {
+impl<C> Div<i32> for Vec2<C> where C: Copy {
     type Output = Self;
 
     fn div(self, rhs: i32) -> Self {
@@ -152,20 +152,20 @@ impl Div<i32> for Vec2 {
     }
 }
 
-impl DivAssign<i32> for Vec2 {
+impl<C> DivAssign<i32> for Vec2<C> where C: Copy {
     fn div_assign(&mut self, rhs: i32) {
         self.x /= rhs;
         self.y /= rhs;
     }
 }
 
-impl fmt::Display for Vec2 {
+impl<C> fmt::Display for Vec2<C> where C: Copy {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "({}, {})", self.x, self.y)
     }
 }
 
-impl TryFrom<&Element> for Vec2 {
+impl<C> TryFrom<&Element> for Vec2<C> where C: Copy {
     type Error = SCError;
 
     fn try_from(elem: &Element) -> SCResult<Self> {
@@ -177,11 +177,11 @@ impl TryFrom<&Element> for Vec2 {
 mod tests {
     use std::str::FromStr;
 
-    use crate::{util::Element, game::Vec2};
+    use crate::{util::Element, game::{Vec2, Direct}};
 
     #[test]
     fn test_parsing() {
-        assert_eq!(Vec2::try_from(&Element::from_str(r#"
+        assert_eq!(Vec2::<Direct>::try_from(&Element::from_str(r#"
             <coords x="23" y="0" />
         "#).unwrap()).unwrap(), Vec2::new(23, 0));
     }

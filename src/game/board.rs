@@ -2,7 +2,7 @@ use std::ops::{Index, IndexMut};
 
 use crate::util::{Element, SCError, SCResult};
 
-use super::{Field, BOARD_FIELDS, Vec2, Direct, BOARD_SIZE};
+use super::{Field, BOARD_FIELDS, Vec2, Direct, BOARD_SIZE, Move, Doubled};
 
 // Ported from https://github.com/software-challenge/backend/blob/a3145a91749abb73ca5ffd426fd2a77d9a90967a/plugin/src/main/kotlin/sc/plugin2023/Board.kt
 
@@ -38,12 +38,31 @@ impl Board {
         let direct: Vec2<Direct> = coords.into();
         direct.y as usize * BOARD_SIZE + direct.x as usize
     }
+
+    /// Optionally fetches the field at the given position.
+    pub fn get(&self, coords: impl Into<Vec2<Direct>> + Copy) -> Option<&Field> {
+        if Self::in_bounds(coords) {
+            Some(&self[coords])
+        } else {
+            None
+        }
+    }
+
+    /// Fetches the possible moves from a given position.
+    pub fn possible_moves_from(&self, coords: impl Into<Vec2<Doubled>>) -> Vec<Move> {
+        let doubled: Vec2<Doubled> = coords.into();
+        Vec2::<Doubled>::DIRECTIONS
+            .into_iter()
+            .flat_map(|v| (1..BOARD_SIZE).map(move |n| Move::sliding(doubled, n as i32 * v)))
+            .take_while(|c| self.get(c.to()).cloned().unwrap_or_default().fish() > 0)
+            .collect()
+    }
 }
 
 impl<V> Index<V> for Board where V: Copy + Into<Vec2<Direct>> {
     type Output = Field;
 
-    fn index(&self, index: V) -> &Field{
+    fn index(&self, index: V) -> &Field {
         &self.fields[Self::index_for(index)]
     }
 }
