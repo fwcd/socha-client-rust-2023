@@ -67,6 +67,30 @@ impl Vec2<Direct> {
     ];
 }
 
+impl Vec2<Doubled> {
+    pub const LEFT: Self = Self::new(2, 0);
+    pub const RIGHT: Self = Self::new(-2, 0);
+    pub const UP_LEFT: Self = Self::new(-1, -1);
+    pub const UP_RIGHT: Self = Self::new(1, -1);
+    pub const DOWN_LEFT: Self = Self::new(-1, 1);
+    pub const DOWN_RIGHT: Self = Self::new(1, 1);
+
+    /// The directions on the hex board.
+    pub const DIRECTIONS: [Self; 6] = [
+        Self::LEFT,
+        Self::UP_LEFT,
+        Self::UP_RIGHT,
+        Self::RIGHT,
+        Self::DOWN_RIGHT,
+        Self::DOWN_LEFT,
+    ];
+
+    /// Whether the vector is parallel to a hex axis.
+    pub fn straight(&self) -> bool {
+        self.x.abs() == self.y.abs() || (self.x % 2 == 0 && self.y == 0)
+    }
+}
+
 impl From<Vec2<Doubled>> for Vec2<Direct> {
     /// Converts this vector to doubled hex coordinates.
     fn from(v: Vec2<Doubled>) -> Self {
