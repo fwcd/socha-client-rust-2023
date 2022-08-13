@@ -42,6 +42,13 @@ impl Field {
 
     /// The penguin on this field.
     pub fn penguin(self) -> Option<Team> { self.penguin }
+
+    /// Replaces the fish on this field by a penguin, returning the number of fish.
+    pub fn place(&mut self, team: Team) -> usize {
+        let fish = self.fish;
+        *self = Self::with_penguin(team);
+        fish
+    }
 }
 
 impl From<usize> for Field {
