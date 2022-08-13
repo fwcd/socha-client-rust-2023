@@ -2,6 +2,8 @@ use crate::util::{Element, SCError, SCResult};
 
 use super::{Field, BOARD_FIELDS};
 
+// Ported from https://github.com/software-challenge/backend/blob/a3145a91749abb73ca5ffd426fd2a77d9a90967a/plugin/src/main/kotlin/sc/plugin2023/Board.kt
+
 /// The 8x8 game board, a two-dimensional grid of ice floes.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Board {

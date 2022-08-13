@@ -2,7 +2,7 @@ use crate::util::{Element, SCError, SCResult};
 
 use super::Team;
 
-// Port of https://github.com/software-challenge/backend/blob/a3145a91749abb73ca5ffd426fd2a77d9a90967a/plugin/src/main/kotlin/sc/plugin2023/Field.kt
+// Ported from https://github.com/software-challenge/backend/blob/a3145a91749abb73ca5ffd426fd2a77d9a90967a/plugin/src/main/kotlin/sc/plugin2023/Field.kt
 
 /// A field on the board.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]

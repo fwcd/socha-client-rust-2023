@@ -6,6 +6,8 @@ use crate::util::{Element, SCError, SCResult};
 
 use super::Vec2;
 
+// Ported from https://github.com/software-challenge/backend/blob/a3145a91749abb73ca5ffd426fd2a77d9a90967a/plugin/src/main/kotlin/sc/plugin2023/Move.kt
+
 /// A game move.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub struct Move {

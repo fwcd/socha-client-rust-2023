@@ -2,6 +2,8 @@ use crate::util::{Element, SCError, SCResult};
 
 use super::{Board, Move, Team};
 
+// Ported from https://github.com/software-challenge/backend/blob/a3145a91749abb73ca5ffd426fd2a77d9a90967a/plugin/src/main/kotlin/sc/plugin2023/GameState.kt
+
 /// The state of the game at a point in time.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct State {
