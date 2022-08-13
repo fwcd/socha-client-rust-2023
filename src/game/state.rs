@@ -60,4 +60,39 @@ impl TryFrom<&Element> for State {
     }
 }
 
-// TODO: Add test
+#[cfg(test)]
+mod tests {
+    use std::str::FromStr;
+
+    use crate::{util::Element, game::{Board, Team, State, Move, Vec2}};
+
+    #[test]
+    fn test_parsing_state() {
+        assert_eq!(State::try_from(&Element::from_str(r#"
+            <state class="state" turn="1">
+                <startTeam>ONE</startTeam>
+                <board>
+                    <list>
+                        <field>1</field>
+                        <field>2</field>
+                    </list>
+                </board>
+                <lastMove>
+                    <to x="13" y="5"/>
+                </lastMove>
+                <fishes>
+                    <int>1</int>
+                    <int>0</int>
+                </fishes>
+            </state>
+        "#).unwrap()).unwrap(), State {
+            board: Board::new(vec![
+                vec![1.into(), 2.into()],
+            ]),
+            turn: 1,
+            fish: vec![1, 0],
+            last_move: Some(Move::placing(Vec2::new(13, 5))),
+            start_team: Some(Team::One),
+        });
+    }
+}
