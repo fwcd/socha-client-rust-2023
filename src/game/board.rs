@@ -1,6 +1,8 @@
+use std::ops::{Index, IndexMut};
+
 use crate::util::{Element, SCError, SCResult};
 
-use super::{Field, BOARD_FIELDS};
+use super::{Field, BOARD_FIELDS, Vec2, Direct, BOARD_SIZE};
 
 // Ported from https://github.com/software-challenge/backend/blob/a3145a91749abb73ca5ffd426fd2a77d9a90967a/plugin/src/main/kotlin/sc/plugin2023/Board.kt
 
@@ -23,6 +25,32 @@ impl Board {
     /// Creates a new board with the given fields.
     pub const fn new(fields: [Field; BOARD_FIELDS]) -> Self {
         Self { fields }
+    }
+
+    /// Checks whether the given coordinates are in bounds.
+    pub fn in_bounds(coords: impl Into<Vec2<Direct>>) -> bool {
+        let direct: Vec2<Direct> = coords.into();
+        direct.x >= 0 && direct.x < BOARD_SIZE as i32 && direct.y >= 0 && direct.y < BOARD_SIZE as i32
+    }
+
+    /// Converts a vector to an index.
+    fn index_for(coords: impl Into<Vec2<Direct>>) -> usize {
+        let direct: Vec2<Direct> = coords.into();
+        direct.y as usize * BOARD_SIZE + direct.x as usize
+    }
+}
+
+impl<V> Index<V> for Board where V: Copy + Into<Vec2<Direct>> {
+    type Output = Field;
+
+    fn index(&self, index: V) -> &Field{
+        &self.fields[Self::index_for(index)]
+    }
+}
+
+impl<V> IndexMut<V> for Board where V: Copy + Into<Vec2<Direct>> {
+    fn index_mut(&mut self, index: V) -> &mut Field {
+        &mut self.fields[Self::index_for(index)]
     }
 }
 
