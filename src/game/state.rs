@@ -3,14 +3,14 @@ use crate::util::{Element, SCError, SCResult};
 use super::{Board, Move, Team};
 
 /// The state of the game at a point in time.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct State {
     /// The game board.
     board: Board,
     /// The turn of the game.
     turn: usize,
     /// The fish per team.
-    fish: Vec<usize>,
+    fish: [usize; 2],
     /// The most recent move.
     last_move: Option<Move>,
     /// The starting team.
@@ -53,7 +53,11 @@ impl TryFrom<&Element> for State {
         Ok(State {
             board: elem.child_by_name("board")?.try_into()?,
             turn: elem.attribute("turn")?.parse()?,
-            fish: elem.child_by_name("fishes")?.childs_by_name("int").map(|c| Ok(c.content().parse()?)).collect::<SCResult<_>>()?,
+            fish: elem.child_by_name("fishes")?
+                .childs_by_name("int").map(|c| Ok(c.content().parse()?))
+                .collect::<SCResult<Vec<usize>>>()?
+                .try_into()
+                .map_err(|e| SCError::from(format!("State has wrong number of fish teams: {:?}", e)))?,
             last_move: elem.child_by_name("lastMove").ok().and_then(|m| m.try_into().ok()),
             start_team: elem.child_by_name("startTeam").ok().and_then(|t| t.content().parse().ok()),
         })
@@ -73,8 +77,84 @@ mod tests {
                 <startTeam>ONE</startTeam>
                 <board>
                     <list>
-                        <field>1</field>
-                        <field>2</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                    </list>
+                    <list>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                    </list>
+                    <list>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                    </list>
+                    <list>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                    </list>
+                    <list>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                    </list>
+                    <list>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                    </list>
+                    <list>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                    </list>
+                    <list>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
+                        <field>0</field>
                     </list>
                 </board>
                 <lastMove>
@@ -86,11 +166,9 @@ mod tests {
                 </fishes>
             </state>
         "#).unwrap()).unwrap(), State {
-            board: Board::new(vec![
-                vec![1.into(), 2.into()],
-            ]),
+            board: Board::empty(),
             turn: 1,
-            fish: vec![1, 0],
+            fish: [1, 0],
             last_move: Some(Move::placing(Vec2::new(13, 5))),
             start_team: Some(Team::One),
         });
