@@ -1,7 +1,7 @@
 use log::{info, debug};
 use rand::seq::SliceRandom;
 
-use crate::{client::SCClientDelegate, game::{Move, Team, State}};
+use socha_client_2023::{client::SCClientDelegate, game::{Move, Team, State}};
 
 /// An empty game logic structure that
 /// implements the client delegate trait

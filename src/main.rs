@@ -1,9 +1,12 @@
+mod logic;
+
 use std::str::FromStr;
 use clap::Parser;
 use simplelog::{SimpleLogger, Config};
 use log::LevelFilter;
 use socha_client_2023::client::{SCClient, DebugMode};
-use socha_client_2023::logic::OwnGameLogic;
+
+use logic::OwnGameLogic;
 
 /// Software Challenge 2023 client.
 #[derive(Parser, Debug)]
