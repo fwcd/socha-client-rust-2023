@@ -43,6 +43,14 @@ impl Team {
             Self::Two => -1,
         }
     }
+
+    /// Fetches the letter associated with the team.
+    pub fn letter(self) -> char {
+        match self {
+            Self::One => 'R',
+            Self::Two => 'B',
+        }
+    }
 }
 
 impl fmt::Display for Team {

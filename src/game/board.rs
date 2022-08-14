@@ -1,4 +1,4 @@
-use std::ops::{Index, IndexMut};
+use std::{ops::{Index, IndexMut}, fmt};
 
 use crate::util::{Element, SCError, SCResult};
 
@@ -58,7 +58,7 @@ impl Board {
         let doubled: Vec2<Doubled> = coords.into();
         Vec2::<Doubled>::DIRECTIONS
             .into_iter()
-            .flat_map(|v| (1..BOARD_SIZE).map(move |n| Move::sliding(doubled, n as i32 * v)))
+            .flat_map(|v| (1..BOARD_SIZE as i32).map(move |n| Move::sliding(doubled, n * v)))
             .take_while(|c| self.get(c.to()).unwrap_or_default().fish() > 0)
             .collect()
     }
@@ -89,6 +89,18 @@ impl<V> Index<V> for Board where V: Copy + Into<Vec2<Direct>> {
 impl<V> IndexMut<V> for Board where V: Copy + Into<Vec2<Direct>> {
     fn index_mut(&mut self, index: V) -> &mut Field {
         &mut self.fields[Self::index_for(index)]
+    }
+}
+
+impl fmt::Display for Board {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        for y in 0..BOARD_SIZE {
+            for x in 0..BOARD_SIZE {
+                write!(f, "{}", self.fields[y * BOARD_SIZE + x])?;
+            }
+            writeln!(f)?;
+        }
+        Ok(())
     }
 }
 

@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::util::{Element, SCError, SCResult};
 
 use super::Team;
@@ -60,6 +62,16 @@ impl From<usize> for Field {
 impl From<Team> for Field {
     fn from(team: Team) -> Self {
         Self::with_penguin(team)
+    }
+}
+
+impl fmt::Display for Field {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if let Some(team) = self.penguin {
+            write!(f, "{}", team.letter())
+        } else {
+            write!(f, "{}", self.fish)
+        }
     }
 }
 
