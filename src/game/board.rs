@@ -64,15 +64,15 @@ impl Board {
     }
 
     /// Fetches an iterator over the fields with coordinates.
-    pub fn fields(&self) -> impl Iterator<Item=(Vec2<Direct>, Field)> {
+    pub fn fields(&self) -> impl Iterator<Item=(Vec2<Doubled>, Field)> {
         self.fields
             .into_iter()
             .enumerate()
-            .map(|(i, f)| (Self::coords_for(i), f))
+            .map(|(i, f)| (Self::coords_for(i).into(), f))
     }
 
     /// Fetches the penguins on the board.
-    pub fn penguins(&self) -> impl Iterator<Item=(Vec2<Direct>, Team)> {
+    pub fn penguins(&self) -> impl Iterator<Item=(Vec2<Doubled>, Team)> {
         self.fields().filter_map(|(c, f)| f.penguin().map(|p| (c, p)))
     }
 }

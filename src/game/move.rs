@@ -4,45 +4,45 @@ use std::fmt;
 
 use crate::util::{Element, SCError, SCResult};
 
-use super::{Vec2, Direct};
+use super::{Vec2, Doubled};
 
 // Ported from https://github.com/software-challenge/backend/blob/a3145a91749abb73ca5ffd426fd2a77d9a90967a/plugin/src/main/kotlin/sc/plugin2023/Move.kt
 
 /// A game move.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub struct Move {
-    from: Option<Vec2<Direct>>,
-    to: Vec2<Direct>,
+    from: Option<Vec2<Doubled>>,
+    to: Vec2<Doubled>,
 }
 
 impl Move {
     /// Creates a new move from the given field to the given field.
-    pub fn new(from: Option<Vec2<Direct>>, to: Vec2<Direct>) -> Self {
+    pub fn new(from: Option<Vec2<Doubled>>, to: Vec2<Doubled>) -> Self {
         Self { from, to }
     }
 
     /// Convenience constructor for creating a move of a penguin between two fields.
-    pub fn between(from: impl Into<Vec2<Direct>>, to: impl Into<Vec2<Direct>>) -> Self {
+    pub fn between(from: impl Into<Vec2<Doubled>>, to: impl Into<Vec2<Doubled>>) -> Self {
         Self::new(Some(from.into()), to.into())
     }
 
     /// Convenience constructor for creating a move of a penguin into a certain direction.
-    pub fn sliding(from: impl Into<Vec2<Direct>>, by: impl Into<Vec2<Direct>>) -> Self {
+    pub fn sliding(from: impl Into<Vec2<Doubled>>, by: impl Into<Vec2<Doubled>>) -> Self {
         let from = from.into();
         let by = by.into();
         Self::between(from, from + by)
     }
 
     /// Convenience constructor for creating a move placing a penguin.
-    pub fn placing(pos: impl Into<Vec2<Direct>>) -> Self {
+    pub fn placing(pos: impl Into<Vec2<Doubled>>) -> Self {
         Self::new(None, pos.into())
     }
 
     /// The source position if this is a move of an existing penguin, otherwise None.
-    pub fn from(self) -> Option<Vec2<Direct>> { self.from }
+    pub fn from(self) -> Option<Vec2<Doubled>> { self.from }
 
     /// The target position of the penguin.
-    pub fn to(self) -> Vec2<Direct> { self.to }
+    pub fn to(self) -> Vec2<Doubled> { self.to }
 }
 
 impl fmt::Display for Move {

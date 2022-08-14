@@ -1,6 +1,6 @@
 use crate::util::{Element, SCError, SCResult};
 
-use super::{Board, Move, Team, PENGUINS_PER_TEAM, TEAMS, Vec2, Direct, Field};
+use super::{Board, Move, Team, PENGUINS_PER_TEAM, TEAMS, Vec2, Field, Doubled};
 
 // Ported from https://github.com/software-challenge/backend/blob/a3145a91749abb73ca5ffd426fd2a77d9a90967a/plugin/src/main/kotlin/sc/plugin2023/GameState.kt
 
@@ -48,7 +48,7 @@ impl State {
         if penguins.len() == PENGUINS_PER_TEAM * team.map_or(TEAMS, |_| 1) {
             penguins
                 .into_iter()
-                .all(|(c, _)| c.to_doubled()
+                .all(|(c, _)| c
                     .hex_neighbors()
                     .into_iter()
                     .all(|n| self.board.get(n).unwrap_or_default().fish() == 0))
@@ -63,7 +63,7 @@ impl State {
     }
 
     /// The current team's fields.
-    pub fn current_pieces(&self) -> impl Iterator<Item=(Vec2<Direct>, Field)> {
+    pub fn current_pieces(&self) -> impl Iterator<Item=(Vec2<Doubled>, Field)> {
         let team = self.current_team();
         self.board.fields()
             .filter(move |(_, f)| f.penguin() == Some(team))
