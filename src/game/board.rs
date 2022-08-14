@@ -58,8 +58,9 @@ impl Board {
         let doubled: Vec2<Doubled> = coords.into();
         Vec2::<Doubled>::DIRECTIONS
             .into_iter()
-            .flat_map(|v| (1..BOARD_SIZE as i32).map(move |n| Move::sliding(doubled, n * v)))
-            .take_while(|c| self.get(c.to()).unwrap_or_default().fish() > 0)
+            .flat_map(|v| (1..BOARD_SIZE as i32)
+                .map(move |n| Move::sliding(doubled, n * v))
+                .take_while(|c| self.get(c.to()).unwrap_or_default().fish() > 0))
             .collect()
     }
 
