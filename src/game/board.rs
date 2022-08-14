@@ -28,14 +28,22 @@ impl Board {
     }
 
     /// Checks whether the given coordinates are in bounds.
-    pub fn in_bounds(coords: impl Into<Vec2<Direct>>) -> bool {
-        let direct: Vec2<Direct> = coords.into();
-        direct.x >= 0 && direct.x < BOARD_SIZE as i32 && direct.y >= 0 && direct.y < BOARD_SIZE as i32
+    pub fn in_bounds(coords: impl Into<Vec2<Doubled>>) -> bool {
+        let doubled: Vec2<Doubled> = coords.into();
+        let direct: Vec2<Direct> = doubled.into();
+        // We need to check doubled.x separately, since (-1, ...) would otherwise get mapped to (0, ...)
+        // I.e. we also have to be careful not to convert back to direct coordinates anywhere in the
+        // 'Into-chain' since we lose information there and may cause (-1, ...) to incorrectly pass the bounds-check.
+        doubled.x >= 0
+            && direct.x >= 0
+            && direct.x < BOARD_SIZE as i32
+            && direct.y >= 0
+            && direct.y < BOARD_SIZE as i32
     }
 
     /// Converts coordinates to an index.
-    fn index_for(coords: impl Into<Vec2<Direct>>) -> usize {
-        let direct: Vec2<Direct> = coords.into();
+    fn index_for(coords: impl Into<Vec2<Doubled>>) -> usize {
+        let direct: Vec2<Direct> = coords.into().into();
         direct.y as usize * BOARD_SIZE + direct.x as usize
     }
 
@@ -45,8 +53,8 @@ impl Board {
     }
 
     /// Optionally fetches the field at the given position.
-    pub fn get(&self, coords: impl Into<Vec2<Direct>> + Copy) -> Option<Field> {
-        if Self::in_bounds(coords) {
+    pub fn get(&self, coords: impl Into<Vec2<Doubled>> + Copy) -> Option<Field> {
+        if Self::in_bounds(coords.into()) {
             Some(self[coords])
         } else {
             None
@@ -79,7 +87,7 @@ impl Board {
     }
 }
 
-impl<V> Index<V> for Board where V: Copy + Into<Vec2<Direct>> {
+impl<V> Index<V> for Board where V: Copy + Into<Vec2<Doubled>> {
     type Output = Field;
 
     fn index(&self, index: V) -> &Field {
@@ -87,7 +95,7 @@ impl<V> Index<V> for Board where V: Copy + Into<Vec2<Direct>> {
     }
 }
 
-impl<V> IndexMut<V> for Board where V: Copy + Into<Vec2<Direct>> {
+impl<V> IndexMut<V> for Board where V: Copy + Into<Vec2<Doubled>> {
     fn index_mut(&mut self, index: V) -> &mut Field {
         &mut self.fields[Self::index_for(index)]
     }
