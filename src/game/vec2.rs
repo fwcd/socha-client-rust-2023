@@ -112,16 +112,16 @@ impl Vec2<Doubled> {
 }
 
 impl From<Vec2<Doubled>> for Vec2<Direct> {
-    /// Converts this vector to doubled hex coordinates.
+    /// Converts this vector from doubled hex coordinates.
     fn from(v: Vec2<Doubled>) -> Self {
-        Self::new(v.x * 2 + v.y % 2, v.y)
+        Self::new(v.x / 2, v.y)
     }
 }
 
 impl From<Vec2<Direct>> for Vec2<Doubled> {
-    /// Converts this vector to doubled hex coordinates.
+    /// Converts this vector from doubled hex coordinates.
     fn from(v: Vec2<Direct>) -> Self {
-        Self::new(v.x / 2, v.y)
+        Self::new(v.x * 2 + v.y % 2, v.y)
     }
 }
 
