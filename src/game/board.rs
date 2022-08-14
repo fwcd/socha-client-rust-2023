@@ -2,7 +2,7 @@ use std::ops::{Index, IndexMut};
 
 use crate::util::{Element, SCError, SCResult};
 
-use super::{Field, BOARD_FIELDS, Vec2, Direct, BOARD_SIZE, Move, Doubled};
+use super::{Field, BOARD_FIELDS, Vec2, Direct, BOARD_SIZE, Move, Doubled, Team};
 
 // Ported from https://github.com/software-challenge/backend/blob/a3145a91749abb73ca5ffd426fd2a77d9a90967a/plugin/src/main/kotlin/sc/plugin2023/Board.kt
 
@@ -33,16 +33,21 @@ impl Board {
         direct.x >= 0 && direct.x < BOARD_SIZE as i32 && direct.y >= 0 && direct.y < BOARD_SIZE as i32
     }
 
-    /// Converts a vector to an index.
+    /// Converts coordinates to an index.
     fn index_for(coords: impl Into<Vec2<Direct>>) -> usize {
         let direct: Vec2<Direct> = coords.into();
         direct.y as usize * BOARD_SIZE + direct.x as usize
     }
 
+    /// Converts an index to coordinates.
+    fn coords_for(index: usize) -> Vec2<Direct> {
+        Vec2::new((index % BOARD_SIZE) as i32, (index / BOARD_SIZE) as i32)
+    }
+
     /// Optionally fetches the field at the given position.
-    pub fn get(&self, coords: impl Into<Vec2<Direct>> + Copy) -> Option<&Field> {
+    pub fn get(&self, coords: impl Into<Vec2<Direct>> + Copy) -> Option<Field> {
         if Self::in_bounds(coords) {
-            Some(&self[coords])
+            Some(self[coords])
         } else {
             None
         }
@@ -54,8 +59,21 @@ impl Board {
         Vec2::<Doubled>::DIRECTIONS
             .into_iter()
             .flat_map(|v| (1..BOARD_SIZE).map(move |n| Move::sliding(doubled, n as i32 * v)))
-            .take_while(|c| self.get(c.to()).cloned().unwrap_or_default().fish() > 0)
+            .take_while(|c| self.get(c.to()).unwrap_or_default().fish() > 0)
             .collect()
+    }
+
+    /// Fetches an iterator over the fields with coordinates.
+    pub fn fields(&self) -> impl Iterator<Item=(Vec2<Direct>, Field)> {
+        self.fields
+            .into_iter()
+            .enumerate()
+            .map(|(i, f)| (Self::coords_for(i), f))
+    }
+
+    /// Fetches the penguins on the board.
+    pub fn penguins(&self) -> impl Iterator<Item=(Vec2<Direct>, Team)> {
+        self.fields().filter_map(|(c, f)| f.penguin().map(|p| (c, p)))
     }
 }
 
