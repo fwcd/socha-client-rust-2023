@@ -3,10 +3,8 @@ use rand::seq::SliceRandom;
 
 use socha_client_2023::{client::GameClientDelegate, game::{Move, Team, State}};
 
-/// An empty game logic structure that
-/// implements the client delegate trait
-/// and thus is responsible e.g. for picking
-/// a move when requested.
+/// An empty game logic structure that implements the client delegate trait
+/// and thus is responsible e.g. for picking a move when requested.
 pub struct OwnLogic;
 
 impl GameClientDelegate for OwnLogic {
