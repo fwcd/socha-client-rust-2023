@@ -1,6 +1,8 @@
+use arrayvec::ArrayVec;
+
 use crate::util::{Element, Error, Result};
 
-use super::{Board, Move, Team, PENGUINS_PER_TEAM, TEAMS, Vec2, Field, Doubled};
+use super::{Board, Move, Team, PENGUINS_PER_TEAM, TEAMS, Vec2, Field, Doubled, BOARD_FIELDS};
 
 // Ported from https://github.com/software-challenge/backend/blob/a3145a91749abb73ca5ffd426fd2a77d9a90967a/plugin/src/main/kotlin/sc/plugin2023/GameState.kt
 
@@ -42,7 +44,7 @@ impl State {
 
     /// Whether the given team cannot move.
     pub fn immovable(&self, team: Option<Team>) -> bool {
-        let penguins: Vec<_> = self.board.penguins()
+        let penguins: ArrayVec<_, BOARD_FIELDS> = self.board.penguins()
             .filter(|&(_, p)| team.is_none() || Some(p) == team)
             .collect();
         if penguins.len() == PENGUINS_PER_TEAM * team.map_or(TEAMS, |_| 1) {
@@ -125,8 +127,8 @@ impl TryFrom<&Element> for State {
             turn: elem.attribute("turn")?.parse()?,
             fish: elem.child_by_name("fishes")?
                 .childs_by_name("int").map(|c| Ok(c.content().parse()?))
-                .collect::<Result<Vec<usize>>>()?
-                .try_into()
+                .collect::<Result<ArrayVec<usize, TEAMS>>>()?
+                .into_inner()
                 .map_err(|e| Error::from(format!("State has wrong number of fish teams: {:?}", e)))?,
             last_move: elem.child_by_name("lastMove").ok().and_then(|m| m.try_into().ok()),
             start_team: elem.child_by_name("startTeam")?.content().parse()?,

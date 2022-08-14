@@ -1,5 +1,7 @@
 use std::{ops::{Index, IndexMut}, fmt};
 
+use arrayvec::ArrayVec;
+
 use crate::util::{Element, Error, Result};
 
 use super::{Field, BOARD_FIELDS, Vec2, Direct, BOARD_SIZE, Move, Doubled, Team};
@@ -62,14 +64,13 @@ impl Board {
     }
 
     /// Fetches the possible moves from a given position.
-    pub fn possible_moves_from(&self, coords: impl Into<Vec2<Doubled>>) -> Vec<Move> {
+    pub fn possible_moves_from<'a>(&'a self, coords: impl Into<Vec2<Doubled>>) -> impl Iterator<Item=Move> + 'a {
         let doubled: Vec2<Doubled> = coords.into();
         Vec2::<Doubled>::DIRECTIONS
             .into_iter()
-            .flat_map(|v| (1..BOARD_SIZE as i32)
+            .flat_map(move |v| (1..BOARD_SIZE as i32)
                 .map(move |n| Move::sliding(doubled, n * v))
                 .take_while(|c| self.get(c.to()).unwrap_or_default().fish() > 0))
-            .collect()
     }
 
     /// Fetches an iterator over the fields with coordinates.
@@ -120,8 +121,8 @@ impl TryFrom<&Element> for Board {
         Ok(Self {
             fields: elem.childs_by_name("list")
                 .flat_map(|c| c.childs_by_name("field").map(|c| c.try_into()))
-                .collect::<Result<Vec<Field>>>()?
-                .try_into()
+                .collect::<Result<ArrayVec<Field, BOARD_FIELDS>>>()?
+                .into_inner()
                 .map_err(|e| Error::from(format!("Board has wrong number of fields: {:?}", e)))?
         })
     }
