@@ -73,7 +73,8 @@ impl Board {
 
     /// Fetches the penguins on the board.
     pub fn penguins(&self) -> impl Iterator<Item=(Vec2<Doubled>, Team)> {
-        self.fields().filter_map(|(c, f)| f.penguin().map(|p| (c, p)))
+        self.fields()
+            .filter_map(|(c, f)| f.penguin().map(|p| (c, p)))
     }
 }
 
