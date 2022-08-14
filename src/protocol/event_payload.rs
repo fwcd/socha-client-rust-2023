@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::{util::{Element, SCResult, SCError}, game::{State, Team}};
+use crate::{util::{Element, Result, Error}, game::{State, Team}};
 
 use super::GameResult;
 
@@ -33,16 +33,16 @@ impl fmt::Display for EventPayload {
 }
 
 impl TryFrom<&Element> for EventPayload {
-    type Error = SCError;
+    type Error = Error;
 
-    fn try_from(elem: &Element) -> SCResult<Self> {
+    fn try_from(elem: &Element) -> Result<Self> {
         match elem.attribute("class")? {
             "welcomeMessage" => Ok(Self::Welcome(elem.attribute("color")?.parse()?)),
             "memento" => Ok(Self::Memento(elem.child_by_name("state")?.try_into()?)),
             "moveRequest" => Ok(Self::MoveRequest),
             "result" => Ok(Self::GameResult(elem.try_into()?)),
-            "error" => Err(SCError::ServerError(elem.attribute("message")?.to_owned())),
-            _ => Err(SCError::UnknownElement(elem.clone())),
+            "error" => Err(Error::ServerError(elem.attribute("message")?.to_owned())),
+            _ => Err(Error::UnknownElement(elem.clone())),
         }
     }
 }

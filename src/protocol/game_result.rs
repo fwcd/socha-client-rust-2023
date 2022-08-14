@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::util::{Element, SCError, SCResult};
+use crate::util::{Element, Error, Result};
 
 use super::{ScoreDefinition, Player, Score};
 
@@ -28,9 +28,9 @@ impl GameResult {
 }
 
 impl TryFrom<&Element> for GameResult {
-    type Error = SCError;
+    type Error = Error;
 
-    fn try_from(elem: &Element) -> SCResult<Self> {
+    fn try_from(elem: &Element) -> Result<Self> {
         Ok(Self {
             definition: elem.child_by_name("definition")?.try_into()?,
             scores: elem
@@ -41,7 +41,7 @@ impl TryFrom<&Element> for GameResult {
                     let score = Score::try_from(e.child_by_name("score")?)?;
                     Ok((player, score))
                 })
-                .collect::<SCResult<_>>()?,
+                .collect::<Result<_>>()?,
             winner: elem.child_by_name("winner").ok().and_then(|w| w.try_into().ok()),
         })
     }

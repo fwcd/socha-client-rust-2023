@@ -1,4 +1,4 @@
-use crate::util::{Element, SCError, SCResult};
+use crate::util::{Element, Error, Result};
 
 use super::{Board, Move, Team, PENGUINS_PER_TEAM, TEAMS, Vec2, Field, Doubled};
 
@@ -90,17 +90,17 @@ impl State {
 }
 
 impl TryFrom<&Element> for State {
-    type Error = SCError;
+    type Error = Error;
 
-    fn try_from(elem: &Element) -> SCResult<Self> {
+    fn try_from(elem: &Element) -> Result<Self> {
         Ok(State {
             board: elem.child_by_name("board")?.try_into()?,
             turn: elem.attribute("turn")?.parse()?,
             fish: elem.child_by_name("fishes")?
                 .childs_by_name("int").map(|c| Ok(c.content().parse()?))
-                .collect::<SCResult<Vec<usize>>>()?
+                .collect::<Result<Vec<usize>>>()?
                 .try_into()
-                .map_err(|e| SCError::from(format!("State has wrong number of fish teams: {:?}", e)))?,
+                .map_err(|e| Error::from(format!("State has wrong number of fish teams: {:?}", e)))?,
             last_move: elem.child_by_name("lastMove").ok().and_then(|m| m.try_into().ok()),
             start_team: elem.child_by_name("startTeam")?.content().parse()?,
         })

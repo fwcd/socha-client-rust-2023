@@ -8,7 +8,7 @@ use log::{warn, error, info, debug, trace};
 use quick_xml::events::attributes::Attribute;
 use quick_xml::events::{Event, BytesStart, BytesText, BytesEnd};
 use quick_xml::{Reader, Writer};
-use super::{SCResult, SCError};
+use super::{Result, Error};
 
 /// A deserialized, in-memory tree-representation
 /// of an XML node.
@@ -37,7 +37,7 @@ impl Element {
 
     /// Deserializes an XML node tree
     /// from the given XML event reader.
-    pub fn read_from<R>(reader: &mut Reader<R>) -> SCResult<Element> where R: BufRead {
+    pub fn read_from<R>(reader: &mut Reader<R>) -> Result<Element> where R: BufRead {
         let mut node_stack = VecDeque::<Element>::new();
         let mut buf = Vec::new();
         
@@ -82,7 +82,7 @@ impl Element {
                         }
                     }
                 },
-                Ok(Event::Eof) => break Err(SCError::Eof),
+                Ok(Event::Eof) => break Err(Error::Eof),
                 Err(e) => break Err(e.into()),
                 ev => info!("Read other event: {:?}", ev),
             }
@@ -93,7 +93,7 @@ impl Element {
     }
     
     /// Serializes the node to an XML string using a tree traversal.
-    pub fn write_to<W>(&self, writer: &mut Writer<W>) -> SCResult<()> where W: Write {
+    pub fn write_to<W>(&self, writer: &mut Writer<W>) -> Result<()> where W: Write {
         self.write_to_impl(writer)?;
         writer.inner().flush()?;
 
@@ -101,7 +101,7 @@ impl Element {
         Ok(())
     }
 
-    fn write_to_impl<W>(&self, writer: &mut Writer<W>) -> SCResult<()> where W: Write {
+    fn write_to_impl<W>(&self, writer: &mut Writer<W>) -> Result<()> where W: Write {
         let start = BytesStart::from(self);
         
         if self.childs.is_empty() {
@@ -139,12 +139,12 @@ impl Element {
     }
     
     /// Fetches an attribute's value by key.
-    pub fn attribute(&self, key: &str) -> SCResult<&str> {
+    pub fn attribute(&self, key: &str) -> Result<&str> {
         self.attributes.get(key).map(|s| s.as_str()).ok_or_else(|| format!("No attribute with key '{}' found in <{}>!", key, self.name).into())
     }
     
     /// Finds the first child element with the provided tag name.
-    pub fn child_by_name<'a, 'n: 'a>(&'a self, name: &'n str) -> SCResult<&'a Element> {
+    pub fn child_by_name<'a, 'n: 'a>(&'a self, name: &'n str) -> Result<&'a Element> {
         self.childs_by_name(name).next().ok_or_else(|| format!("No <{}> found in <{}>!", name, self.name).into())
     }
     
@@ -164,9 +164,9 @@ impl fmt::Display for Element {
 }
 
 impl FromStr for Element {
-    type Err = SCError;
+    type Err = Error;
 
-    fn from_str(s: &str) -> SCResult<Self> {
+    fn from_str(s: &str) -> Result<Self> {
         Element::read_from(&mut Reader::from_str(s))
     }
 }
@@ -223,7 +223,7 @@ impl<'a> ElementBuilder<'a> {
     }
     
     /// Tries adding the specified child.
-    pub fn try_child(mut self, child: impl TryInto<Element, Error=SCError>) -> SCResult<Self> {
+    pub fn try_child(mut self, child: impl TryInto<Element, Error=Error>) -> Result<Self> {
         self.childs.push(child.try_into()?);
         Ok(self)
     }
@@ -250,9 +250,9 @@ impl<'a> From<ElementBuilder<'a>> for Element {
 }
 
 impl<'a> TryFrom<&BytesStart<'a>> for Element {
-    type Error = SCError;
+    type Error = Error;
 
-    fn try_from(start: &BytesStart<'a>) -> SCResult<Self> {
+    fn try_from(start: &BytesStart<'a>) -> Result<Self> {
         Ok(Element {
             name: str::from_utf8(start.name())?.to_owned(),
             content: String::new(),
@@ -264,7 +264,7 @@ impl<'a> TryFrom<&BytesStart<'a>> for Element {
                     let value = str::from_utf8(&attribute.value)?.to_owned();
                     Ok((key, value))
                 })
-                .collect::<SCResult<HashMap<_, _>>>()?,
+                .collect::<Result<HashMap<_, _>>>()?,
             childs: Vec::new()
         })
     }

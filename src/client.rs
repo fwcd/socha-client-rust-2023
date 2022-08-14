@@ -5,12 +5,12 @@ use quick_xml::events::{Event as XmlEvent, BytesStart};
 use quick_xml::{Reader, Writer};
 use crate::game::{State, Team, Move};
 use crate::protocol::{Request, Event, GameResult, EventPayload, RequestPayload};
-use crate::util::{SCResult, Element, SCError};
+use crate::util::{Result, Element, Error};
 
 /// A handler that implements the game player's
 /// behavior, usually employing some custom move
 /// selection strategy.
-pub trait SCClientDelegate {
+pub trait GameClientDelegate {
     /// Invoked whenever the game state updates.
     fn on_update_state(&mut self, _state: &State) {}
     
@@ -36,14 +36,14 @@ pub struct DebugMode {
 
 /// The client which handles XML requests, manages
 /// the game state and invokes the delegate.
-pub struct SCClient<D> where D: SCClientDelegate {
+pub struct GameClient<D> where D: GameClientDelegate {
     delegate: D,
     debug_mode: DebugMode,
     reservation_code: Option<String>,
     // TODO: Add game state
 }
 
-impl<D> SCClient<D> where D: SCClientDelegate {
+impl<D> GameClient<D> where D: GameClientDelegate {
     /// Creates a new client using the specified delegate.
     pub fn new(delegate: D, debug_mode: DebugMode, reservation_code: Option<String>) -> Self {
         Self { delegate, debug_mode, reservation_code }
@@ -51,7 +51,7 @@ impl<D> SCClient<D> where D: SCClientDelegate {
     
     /// Blocks the thread and begins reading XML messages
     /// from the provided address via TCP.
-    pub fn connect(self, host: &str, port: u16) -> SCResult<GameResult> {
+    pub fn connect(self, host: &str, port: u16) -> Result<GameResult> {
         let address = format!("{}:{}", host, port);
         let stream = TcpStream::connect(&address)?;
         info!("Connected to {}", address);
@@ -77,7 +77,7 @@ impl<D> SCClient<D> where D: SCClientDelegate {
     
     /// Blocks the thread and parses/handles game messages
     /// from the provided reader.
-    fn run(mut self, read: impl Read, write: impl Write) -> SCResult<GameResult> {
+    fn run(mut self, read: impl Read, write: impl Write) -> Result<GameResult> {
         let mut buf = Vec::new();
         let mut reader = Reader::from_reader(BufReader::new(read));
         let mut writer = Writer::new(BufWriter::new(write));
@@ -101,7 +101,7 @@ impl<D> SCClient<D> where D: SCClientDelegate {
                     break
                 },
                 XmlEvent::Text(_) => (),
-                XmlEvent::Eof => return Err(SCError::Eof),
+                XmlEvent::Eof => return Err(Error::Eof),
                 e => warn!("Got unexpected event {:?}", e),
             }
         }
@@ -134,7 +134,7 @@ impl<D> SCClient<D> where D: SCClientDelegate {
                             state = Some(new_state);
                         },
                         EventPayload::MoveRequest => {
-                            let state = state.as_ref().ok_or_else(|| SCError::InvalidState("No state available at move request!".to_owned()))?;
+                            let state = state.as_ref().ok_or_else(|| Error::InvalidState("No state available at move request!".to_owned()))?;
                             let team = state.current_team();
                             let new_move = self.delegate.request_move(state, team);
                             let request = Request::Room { room_id, payload: RequestPayload::Move(new_move) };
@@ -143,10 +143,10 @@ impl<D> SCClient<D> where D: SCClientDelegate {
                         },
                     };
                 },
-                Err(SCError::UnknownElement(element)) => {
+                Err(Error::UnknownElement(element)) => {
                     warn!("Got unknown tag <{}>: {}", element.name(), element);
                 },
-                Err(SCError::ServerError(message)) => {
+                Err(Error::ServerError(message)) => {
                     error!("Server error: {}", message);
                 },
                 Err(e) => {
@@ -158,7 +158,7 @@ impl<D> SCClient<D> where D: SCClientDelegate {
         if let Some(result) = game_result {
             Ok(result)
         }else {
-            Err(SCError::InvalidState("Failed to receive game_result".to_string()))
+            Err(Error::InvalidState("Failed to receive game_result".to_string()))
         }
     }
 }

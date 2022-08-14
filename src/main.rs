@@ -4,9 +4,9 @@ use std::str::FromStr;
 use clap::Parser;
 use simplelog::{SimpleLogger, Config};
 use log::LevelFilter;
-use socha_client_2023::client::{SCClient, DebugMode};
+use socha_client_2023::client::{GameClient, DebugMode};
 
-use logic::OwnGameLogic;
+use logic::OwnLogic;
 
 /// Software Challenge 2023 client.
 #[derive(Parser, Debug)]
@@ -44,6 +44,6 @@ fn main() {
         debug_writer: args.debug_writer,
     };
 
-    let client = SCClient::new(OwnGameLogic, debug_mode, args.reservation);
+    let client = GameClient::new(OwnLogic, debug_mode, args.reservation);
     let _result = client.connect(&args.host, args.port).expect("Error while running client.");
 }

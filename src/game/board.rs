@@ -1,6 +1,6 @@
 use std::{ops::{Index, IndexMut}, fmt};
 
-use crate::util::{Element, SCError, SCResult};
+use crate::util::{Element, Error, Result};
 
 use super::{Field, BOARD_FIELDS, Vec2, Direct, BOARD_SIZE, Move, Doubled, Team};
 
@@ -114,15 +114,15 @@ impl fmt::Display for Board {
 }
 
 impl TryFrom<&Element> for Board {
-    type Error = SCError;
+    type Error = Error;
 
-    fn try_from(elem: &Element) -> SCResult<Self> {
+    fn try_from(elem: &Element) -> Result<Self> {
         Ok(Self {
             fields: elem.childs_by_name("list")
                 .flat_map(|c| c.childs_by_name("field").map(|c| c.try_into()))
-                .collect::<SCResult<Vec<Field>>>()?
+                .collect::<Result<Vec<Field>>>()?
                 .try_into()
-                .map_err(|e| SCError::from(format!("Board has wrong number of fields: {:?}", e)))?
+                .map_err(|e| Error::from(format!("Board has wrong number of fields: {:?}", e)))?
         })
     }
 }

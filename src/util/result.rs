@@ -1,4 +1,4 @@
-use super::SCError;
+use super::Error;
 
-/// A shorthand notation for `Result<T, SCError>`.
-pub type SCResult<T> = Result<T, SCError>;
+/// A shorthand notation for `Result<T, Error>`.
+pub type Result<T> = std::result::Result<T, Error>;

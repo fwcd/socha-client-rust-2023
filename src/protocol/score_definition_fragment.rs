@@ -1,4 +1,4 @@
-use crate::util::{SCError, SCResult, Element};
+use crate::util::{Error, Result, Element};
 
 use super::ScoreAggregation;
 
@@ -25,9 +25,9 @@ impl ScoreDefinitionFragment {
 }
 
 impl TryFrom<&Element> for ScoreDefinitionFragment {
-    type Error = SCError;
+    type Error = Error;
 
-    fn try_from(elem: &Element) -> SCResult<Self> {
+    fn try_from(elem: &Element) -> Result<Self> {
         Ok(ScoreDefinitionFragment {
             name: elem.attribute("name")?.to_owned(),
             aggregation: elem.child_by_name("aggregation")?.content().parse()?,

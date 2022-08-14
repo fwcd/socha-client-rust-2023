@@ -1,4 +1,4 @@
-use crate::util::{Element, SCError, SCResult};
+use crate::util::{Element, Error, Result};
 
 use super::{ScoreCause};
 
@@ -26,13 +26,13 @@ impl Score {
 }
 
 impl TryFrom<&Element> for Score {
-    type Error = SCError;
+    type Error = Error;
 
-    fn try_from(elem: &Element) -> Result<Self, Self::Error> {
+    fn try_from(elem: &Element) -> Result<Self> {
         Ok(Score {
             cause: elem.attribute("cause")?.parse()?,
             reason: elem.attribute("reason")?.to_owned(),
-            parts: elem.childs_by_name("part").map(|p| Ok(p.content().parse::<i32>()?)).collect::<SCResult<_>>()?,
+            parts: elem.childs_by_name("part").map(|p| Ok(p.content().parse::<i32>()?)).collect::<Result<_>>()?,
         })
     }
 }

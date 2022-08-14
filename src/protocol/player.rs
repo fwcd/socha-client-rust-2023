@@ -1,4 +1,4 @@
-use crate::{game::Team, util::{Element, SCError, SCResult}};
+use crate::{game::Team, util::{Element, Error, Result}};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Player {
@@ -20,9 +20,9 @@ impl Player {
 }
 
 impl TryFrom<&Element> for Player {
-    type Error = SCError;
+    type Error = Error;
 
-    fn try_from(elem: &Element) -> SCResult<Self> {
+    fn try_from(elem: &Element) -> Result<Self> {
         Ok(Player {
             name: elem.attribute("name").ok().map(|s| s.to_owned()),
             team: elem.attribute("team")?.parse()?,

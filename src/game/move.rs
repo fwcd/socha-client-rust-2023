@@ -2,7 +2,7 @@
 
 use std::fmt;
 
-use crate::util::{Element, SCError, SCResult};
+use crate::util::{Element, Error, Result};
 
 use super::{Vec2, Doubled};
 
@@ -56,9 +56,9 @@ impl fmt::Display for Move {
 }
 
 impl TryFrom<&Element> for Move {
-    type Error = SCError;
+    type Error = Error;
 
-    fn try_from(elem: &Element) -> SCResult<Self> {
+    fn try_from(elem: &Element) -> Result<Self> {
         Ok(Self {
             from: elem.child_by_name("from").ok().map(Vec2::try_from).transpose()?,
             to: elem.child_by_name("to")?.try_into()?,

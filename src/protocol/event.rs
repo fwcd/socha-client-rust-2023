@@ -1,4 +1,4 @@
-use crate::util::{Element, SCResult, SCError};
+use crate::util::{Element, Result, Error};
 
 use super::EventPayload;
 
@@ -14,9 +14,9 @@ pub enum Event {
 }
 
 impl TryFrom<&Element> for Event {
-    type Error = SCError;
+    type Error = Error;
 
-    fn try_from(elem: &Element) -> SCResult<Self> {
+    fn try_from(elem: &Element) -> Result<Self> {
         match elem.name() {
             "joined" => Ok(Self::Joined { room_id: elem.attribute("roomId")?.to_owned() }),
             "left" => Ok(Self::Left { room_id: elem.attribute("roomId")?.to_owned() }),
@@ -24,7 +24,7 @@ impl TryFrom<&Element> for Event {
                 room_id: elem.attribute("roomId")?.to_owned(),
                 payload: elem.child_by_name("data")?.try_into()?,
             }),
-            _ => Err(SCError::UnknownElement(elem.clone())),
+            _ => Err(Error::UnknownElement(elem.clone())),
         }
     }
 }

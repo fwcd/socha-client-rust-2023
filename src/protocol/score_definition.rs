@@ -1,4 +1,4 @@
-use crate::util::{Element, SCError, SCResult};
+use crate::util::{Element, Error, Result};
 
 use super::ScoreDefinitionFragment;
 
@@ -17,11 +17,11 @@ impl ScoreDefinition {
 }
 
 impl TryFrom<&Element> for ScoreDefinition {
-    type Error = SCError;
+    type Error = Error;
 
-    fn try_from(elem: &Element) -> SCResult<Self> {
+    fn try_from(elem: &Element) -> Result<Self> {
         Ok(ScoreDefinition {
-            fragments: elem.childs_by_name("fragment").map(ScoreDefinitionFragment::try_from).collect::<SCResult<_>>()?,
+            fragments: elem.childs_by_name("fragment").map(ScoreDefinitionFragment::try_from).collect::<Result<_>>()?,
         })
     }
 }

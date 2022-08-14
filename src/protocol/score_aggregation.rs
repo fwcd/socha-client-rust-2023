@@ -1,6 +1,6 @@
 use std::{fmt, str::FromStr};
 
-use crate::util::{SCError, SCResult};
+use crate::util::{Error, Result};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum ScoreAggregation {
@@ -18,13 +18,13 @@ impl fmt::Display for ScoreAggregation {
 }
 
 impl FromStr for ScoreAggregation {
-    type Err = SCError;
+    type Err = Error;
 
-    fn from_str(s: &str) -> SCResult<Self> {
+    fn from_str(s: &str) -> Result<Self> {
         match s {
             "SUM" => Ok(Self::Sum),
             "AVERAGE" => Ok(Self::Average),
-            _ => Err(SCError::UnknownVariant(format!("Unknown aggregation {}", s))),
+            _ => Err(Error::UnknownVariant(format!("Unknown aggregation {}", s))),
         }
     }
 }

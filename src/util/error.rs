@@ -11,7 +11,7 @@ use super::Element;
 /// can conveniently be used in conjunction with
 /// `Result`.
 #[derive(Debug)]
-pub enum SCError {
+pub enum Error {
     Io(IoError),
     ParseInt(ParseIntError),
     ParseFloat(ParseFloatError),
@@ -26,38 +26,38 @@ pub enum SCError {
     Custom(String)
 }
 
-impl From<IoError> for SCError {
+impl From<IoError> for Error {
     fn from(error: IoError) -> Self { Self::Io(error) }
 }
 
-impl From<ParseIntError> for SCError {
+impl From<ParseIntError> for Error {
     fn from(error: ParseIntError) -> Self { Self::ParseInt(error) }
 }
 
-impl From<ParseFloatError> for SCError {
+impl From<ParseFloatError> for Error {
     fn from(error: ParseFloatError) -> Self { Self::ParseFloat(error) }
 }
 
-impl From<ParseBoolError> for SCError {
+impl From<ParseBoolError> for Error {
     fn from(error: ParseBoolError) -> Self { Self::ParseBool(error) }
 }
 
-impl From<Utf8Error> for SCError {
+impl From<Utf8Error> for Error {
     fn from(error: Utf8Error) -> Self { Self::Utf8(error) }
 }
 
-impl From<XmlError> for SCError {
+impl From<XmlError> for Error {
     fn from(error: XmlError) -> Self { Self::Xml(error) }
 }
 
-impl From<AttrError> for SCError {
+impl From<AttrError> for Error {
     fn from(error: AttrError) -> Self { Self::Xml(error.into()) }
 }
 
-impl From<String> for SCError {
+impl From<String> for Error {
     fn from(error: String) -> Self { Self::Custom(error) }
 }
 
-impl<'a> From<&'a str> for SCError {
+impl<'a> From<&'a str> for Error {
     fn from(error: &'a str) -> Self { Self::Custom(error.to_owned()) }
 }

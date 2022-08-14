@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use crate::util::{SCError, SCResult};
+use crate::util::{Error, Result};
 
 /// Determines the cause of a game score.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -14,9 +14,9 @@ pub enum ScoreCause {
 }
 
 impl FromStr for ScoreCause {
-    type Err = SCError;
+    type Err = Error;
 
-    fn from_str(raw: &str) -> SCResult<Self> {
+    fn from_str(raw: &str) -> Result<Self> {
         match raw {
             "REGULAR" => Ok(Self::Regular),
             "LEFT" => Ok(Self::Left),
@@ -24,7 +24,7 @@ impl FromStr for ScoreCause {
             "SOFT_TIMEOUT" => Ok(Self::SoftTimeout),
             "HARD_TIMEOUT" => Ok(Self::HardTimeout),
             "UNKNOWN" => Ok(Self::Unknown),
-            _ => Err(SCError::UnknownVariant(format!("Unknown score cause {}", raw)))
+            _ => Err(Error::UnknownVariant(format!("Unknown score cause {}", raw)))
         }
     }
 }

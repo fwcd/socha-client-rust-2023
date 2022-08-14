@@ -1,6 +1,6 @@
 use std::{fmt, ops::{Add, Sub, Mul, Div, DivAssign, MulAssign}, marker::PhantomData};
 
-use crate::util::{Element, SCError, SCResult};
+use crate::util::{Element, Error, Result};
 
 /// Marker type for direct coordinates.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -186,9 +186,9 @@ impl<C> fmt::Display for Vec2<C> where C: Copy {
 }
 
 impl<C> TryFrom<&Element> for Vec2<C> where C: Copy {
-    type Error = SCError;
+    type Error = Error;
 
-    fn try_from(elem: &Element) -> SCResult<Self> {
+    fn try_from(elem: &Element) -> Result<Self> {
         Ok(Vec2::new(elem.attribute("x")?.parse()?, elem.attribute("y")?.parse()?))
     }
 }

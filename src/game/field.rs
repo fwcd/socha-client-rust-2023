@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::util::{Element, SCError, SCResult};
+use crate::util::{Element, Error, Result};
 
 use super::Team;
 
@@ -76,9 +76,9 @@ impl fmt::Display for Field {
 }
 
 impl TryFrom<&Element> for Field {
-    type Error = SCError;
+    type Error = Error;
 
-    fn try_from(elem: &Element) -> SCResult<Self> {
+    fn try_from(elem: &Element) -> Result<Self> {
         Ok(Self {
             fish: elem.content().parse().unwrap_or(0),
             penguin: elem.content().parse().ok(),

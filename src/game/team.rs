@@ -1,7 +1,7 @@
 use std::str::FromStr;
 use std::fmt;
 
-use crate::util::{SCError, SCResult};
+use crate::util::{Error, Result};
 
 /// A playing party in the game.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -63,13 +63,13 @@ impl fmt::Display for Team {
 }
 
 impl FromStr for Team {
-    type Err = SCError;
+    type Err = Error;
 
-    fn from_str(s: &str) -> SCResult<Self> {
+    fn from_str(s: &str) -> Result<Self> {
         match s {
             "ONE" => Ok(Self::One),
             "TWO" => Ok(Self::Two),
-            _ => Err(SCError::UnknownVariant(format!("Unknown team {}", s))),
+            _ => Err(Error::UnknownVariant(format!("Unknown team {}", s))),
         }
     }
 }
