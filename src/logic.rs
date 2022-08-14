@@ -1,4 +1,4 @@
-use log::info;
+use log::{info, debug};
 use rand::seq::SliceRandom;
 
 use crate::{client::SCClientDelegate, game::{Move, Team, State}};
@@ -17,5 +17,9 @@ impl SCClientDelegate for OwnGameLogic {
             .expect("No move found!");
         info!("Chose move {}", chosen_move);
         chosen_move
+    }
+
+    fn on_update_state(&mut self, state: &State) {
+        debug!("Board:\n{}", state.board());
     }
 }
