@@ -65,6 +65,16 @@ impl Vec2<Direct> {
         Self::new( 1, -1),
         Self::new( 1,  1),
     ];
+
+    /// Fetches the cardinal neighbors.
+    pub fn cardinal_neighbors(self) -> [Self; 4] {
+        Self::CARDINALS.map(|v| self + v)
+    }
+
+    /// A convenience method for converting to doubled coordinates.
+    pub fn to_doubled(self) -> Vec2<Doubled> {
+        self.into()
+    }
 }
 
 impl Vec2<Doubled> {
@@ -86,8 +96,18 @@ impl Vec2<Doubled> {
     ];
 
     /// Whether the vector is parallel to a hex axis.
-    pub fn straight(&self) -> bool {
+    pub fn straight(self) -> bool {
         self.x.abs() == self.y.abs() || (self.x % 2 == 0 && self.y == 0)
+    }
+
+    /// Fetches the 6 hex neighbors.
+    pub fn hex_neighbors(self) -> [Self; 6] {
+        Self::DIRECTIONS.map(|v| self + v)
+    }
+
+    /// A convenience method for converting to direct coordinates.
+    pub fn to_direct(self) -> Vec2<Direct> {
+        self.into()
     }
 }
 

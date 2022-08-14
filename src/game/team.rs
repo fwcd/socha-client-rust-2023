@@ -14,24 +14,33 @@ impl Team {
     /// The team's index.
     pub fn index(self) -> usize {
         match self {
-            Team::One => 0,
-            Team::Two => 1,
+            Self::One => 0,
+            Self::Two => 1,
         }
     }
 
     /// The opponent of the given team.
-    pub fn opponent(self) -> Team {
+    pub fn opponent(self) -> Self {
         match self {
-            Team::One => Team::Two,
-            Team::Two => Team::One,
+            Self::One => Self::Two,
+            Self::Two => Self::One,
+        }
+    }
+
+    /// The opponent of the given team if the given predicate is satisfied.
+    pub fn opponent_if(self, predicate: impl FnOnce(Team) -> bool) -> Self {
+        if predicate(self) {
+            self.opponent()
+        } else {
+            self
         }
     }
 
     /// The x-direction of the team on the board.
     pub fn direction(self) -> i32 {
         match self {
-            Team::One => 1,
-            Team::Two => -1,
+            Self::One => 1,
+            Self::Two => -1,
         }
     }
 }
@@ -39,8 +48,8 @@ impl Team {
 impl fmt::Display for Team {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Team::One => write!(f, "ONE"),
-            Team::Two => write!(f, "TWO"),
+            Self::One => write!(f, "ONE"),
+            Self::Two => write!(f, "TWO"),
         }
     }
 }
@@ -50,8 +59,8 @@ impl FromStr for Team {
 
     fn from_str(s: &str) -> SCResult<Self> {
         match s {
-            "ONE" => Ok(Team::One),
-            "TWO" => Ok(Team::Two),
+            "ONE" => Ok(Self::One),
+            "TWO" => Ok(Self::Two),
             _ => Err(SCError::UnknownVariant(format!("Unknown team {}", s))),
         }
     }
