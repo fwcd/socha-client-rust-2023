@@ -111,7 +111,7 @@ impl TryFrom<&Element> for State {
 mod tests {
     use std::str::FromStr;
 
-    use crate::{util::Element, game::{Board, Team, State, Move, Vec2, Direct}};
+    use crate::{util::Element, game::{Board, Team, State, Move, Vec2, Doubled}};
 
     #[test]
     fn test_parsing_state() {
@@ -212,7 +212,7 @@ mod tests {
             board: Board::EMPTY,
             turn: 1,
             fish: [1, 0],
-            last_move: Some(Move::placing(Vec2::<Direct>::new(13, 5))),
+            last_move: Some(Move::placing(Vec2::<Doubled>::new(13, 5))),
             start_team: Team::One,
         });
     }
