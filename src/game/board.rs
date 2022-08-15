@@ -147,10 +147,10 @@ impl TryFrom<&Element> for Board {
 mod tests {
     use std::str::FromStr;
 
-    use crate::{util::Element, game::{Board, Team}};
+    use crate::{util::Element, game::{Board, Team, Vec2, Field, Direct}};
 
     #[test]
-    fn test_parsing_board() {
+    fn test_xml() {
         assert_eq!(Board::try_from(&Element::from_str(r#"
             <board>
                 <list>
@@ -244,5 +244,26 @@ mod tests {
             1.into(), 1.into(), 1.into(), 1.into(), 1.into(), 1.into(), 1.into(), 1.into(),
             1.into(), 1.into(), 1.into(), 1.into(), 1.into(), 1.into(), 1.into(), 1.into(),
         ]));
+    }
+
+    #[test]
+    fn test_display() {
+        let mut board = Board::EMPTY;
+        board[Vec2::<Direct>::new(2, 2)] = Field::with_fish(3);
+        board[Vec2::<Direct>::new(1, 0)] = Field::with_penguin(Team::One);
+        board[Vec2::<Direct>::new(1, 1)] = Field::with_penguin(Team::Two);
+
+        assert_eq!(board.to_string(), [
+            "0R000000",
+            "0B000000",
+            "00300000",
+            "00000000",
+            "00000000",
+            "00000000",
+            "00000000",
+            "00000000"
+        ].map(|s| format!("{}\n", s)).concat());
+
+        assert_eq!(board.to_string().parse::<Board>().unwrap(), board);
     }
 }
