@@ -96,14 +96,14 @@ impl State {
         let team = self.current_team();
         if let Some(from) = m.from() {
             // Prepare penguin slide
-            debug_assert!(self.board[from].penguin() != Some(team), "Wrong color");
-            debug_assert!(self.current_pieces().count() < PENGUINS_PER_TEAM, "Cannot slide until all penguins have been placed");
+            debug_assert!(self.board[from].penguin() == Some(team), "Wrong color");
+            debug_assert!(self.current_pieces().count() >= PENGUINS_PER_TEAM, "Cannot slide until all penguins have been placed");
             debug_assert!((to - from).straight(), "Can only move in straight lines");
             self.board[from] = Field::EMPTY;
         } else {
             // Prepare penguin placement
-            debug_assert!(self.current_pieces().count() >= PENGUINS_PER_TEAM, "Can only slide when all penguins have been placed");
-            debug_assert!(self.board[to].fish() != 1, "Cannot slide to single fish");
+            debug_assert!(self.current_pieces().count() < PENGUINS_PER_TEAM, "Cannot place after all penguins have been placed");
+            debug_assert!(self.board[to].fish() == 1, "Cannot place on more than one fish");
         }
         self.fish[team.index()] += self.board[to].place(team);
         self.last_move = Some(m);
