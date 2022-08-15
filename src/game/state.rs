@@ -93,21 +93,21 @@ impl State {
     /// Performs the given move.
     pub fn perform(&mut self, m: Move) {
         let to = m.to();
+        let team = self.current_team();
         if let Some(from) = m.from() {
-            // Perform penguin placement
-            debug_assert!(self.board[from].penguin() != Some(self.current_team()), "Wrong color");
+            // Prepare penguin slide
+            debug_assert!(self.board[from].penguin() != Some(team), "Wrong color");
             debug_assert!(self.current_pieces().count() < PENGUINS_PER_TEAM, "Cannot slide until all penguins have been placed");
             debug_assert!((to - from).straight(), "Can only move in straight lines");
             self.board[from] = Field::EMPTY;
         } else {
-            // Perform penguin slide
+            // Prepare penguin placement
             debug_assert!(self.current_pieces().count() >= PENGUINS_PER_TEAM, "Can only slide when all penguins have been placed");
             debug_assert!(self.board[to].fish() != 1, "Cannot slide to single fish");
-            let team = self.current_team();
-            self.fish[team.index()] += self.board[to].place(team);
-            self.last_move = Some(m);
-            self.turn += 1;
         }
+        self.fish[team.index()] += self.board[to].place(team);
+        self.last_move = Some(m);
+        self.turn += 1;
     }
 
     /// Fetches the state after the given move.
