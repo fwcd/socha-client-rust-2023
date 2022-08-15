@@ -75,6 +75,21 @@ impl fmt::Display for Field {
     }
 }
 
+impl TryFrom<char> for Field {
+    type Error = Error;
+
+    fn try_from(c: char) -> Result<Self> {
+        if c.is_alphabetic() {
+            let team = Team::with_letter(c).ok_or_else(|| Error::Custom(format!("Not a team: {}", c)))?;
+            Ok(Field::with_penguin(team))
+        } else if let Some(fish) = c.to_digit(10) {
+            Ok(Field::with_fish(fish as usize))
+        } else {
+            Err(Error::Custom(format!("Invalid field: {}", c)))
+        }
+    }
+}
+
 impl TryFrom<&Element> for Field {
     type Error = Error;
 

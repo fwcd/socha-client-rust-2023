@@ -11,6 +11,15 @@ pub enum Team {
 }
 
 impl Team {
+    /// The team with the given letter.
+    pub fn with_letter(letter: char) -> Option<Self> {
+        match letter {
+            'R' => Some(Self::One),
+            'B' => Some(Self::Two),
+            _ => None,
+        }
+    }
+
     /// The team's index.
     pub fn index(self) -> usize {
         match self {

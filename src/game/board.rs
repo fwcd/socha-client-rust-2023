@@ -1,4 +1,4 @@
-use std::{ops::{Index, IndexMut}, fmt};
+use std::{ops::{Index, IndexMut}, fmt, str::FromStr};
 
 use arrayvec::ArrayVec;
 
@@ -111,6 +111,21 @@ impl fmt::Display for Board {
             writeln!(f)?;
         }
         Ok(())
+    }
+}
+
+impl FromStr for Board {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        Ok(Self {
+            fields: s.lines()
+                .filter(|l| !l.is_empty())
+                .flat_map(|l| l.chars().map(|c| c.try_into()))
+                .collect::<Result<ArrayVec<Field, BOARD_FIELDS>>>()?
+                .into_inner()
+                .map_err(|e| Error::from(format!("Board has wrong number of fields: {:?}", e)))?
+        })
     }
 }
 
