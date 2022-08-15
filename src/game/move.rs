@@ -84,7 +84,7 @@ mod tests {
     use crate::{util::Element, game::{Move, Vec2}};
 
     #[test]
-    fn test_parsing_placing_move() {
+    fn test_place_from_xml() {
         assert_eq!(Move::try_from(&Element::from_str(r#"
             <data class="move">
                 <to x="13" y="11"/>
@@ -96,7 +96,7 @@ mod tests {
     }
 
     #[test]
-    fn test_parsing_move() {
+    fn test_slide_from_xml() {
         assert_eq!(Move::try_from(&Element::from_str(r#"
             <data class="move">
                 <from x="3" y="5"/>
@@ -109,7 +109,7 @@ mod tests {
     }
 
     #[test]
-    fn test_formatting_move() {
+    fn test_slide_to_xml() {
         assert_eq!(Element::from(Move {
             from: Some(Vec2::new(2, 3)),
             to: Vec2::new(4, 1),

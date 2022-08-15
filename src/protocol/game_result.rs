@@ -54,7 +54,7 @@ mod tests {
     use crate::{util::Element, protocol::{ScoreDefinition, ScoreDefinitionFragment, ScoreAggregation, GameResult, Player, Score, ScoreCause}, game::Team, hashmap};
 
     #[test]
-    fn test_parsing() {
+    fn test_from_xml() {
         assert_eq!(GameResult::try_from(&Element::from_str(r#"
             <data class="result">
                 <definition>

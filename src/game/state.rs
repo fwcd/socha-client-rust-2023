@@ -163,7 +163,7 @@ mod tests {
     use crate::{util::Element, game::{Board, Team, State, Move, Vec2, Doubled}};
 
     #[test]
-    fn test_parsing_state() {
+    fn test_from_xml() {
         assert_eq!(State::try_from(&Element::from_str(r#"
             <state class="state" turn="1">
                 <startTeam>ONE</startTeam>

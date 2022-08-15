@@ -150,7 +150,7 @@ mod tests {
     use crate::{util::Element, game::{Board, Team, Vec2, Field, Direct}};
 
     #[test]
-    fn test_xml() {
+    fn test_from_xml() {
         assert_eq!(Board::try_from(&Element::from_str(r#"
             <board>
                 <list>
@@ -247,7 +247,7 @@ mod tests {
     }
 
     #[test]
-    fn test_display() {
+    fn test_display_roundtrip() {
         let mut board = Board::EMPTY;
         board[Vec2::<Direct>::new(2, 2)] = Field::with_fish(3);
         board[Vec2::<Direct>::new(1, 0)] = Field::with_penguin(Team::One);
