@@ -51,11 +51,13 @@ impl TryFrom<&Element> for GameResult {
 mod tests {
     use std::str::FromStr;
 
+    use indoc::indoc;
+
     use crate::{util::Element, protocol::{ScoreDefinition, ScoreDefinitionFragment, ScoreAggregation, GameResult, Player, Score, ScoreCause}, game::Team, hashmap};
 
     #[test]
     fn test_from_xml() {
-        assert_eq!(GameResult::try_from(&Element::from_str(r#"
+        assert_eq!(GameResult::try_from(&Element::from_str(indoc! {r#"
             <data class="result">
                 <definition>
                     <fragment name="Siegpunkte">
@@ -85,7 +87,7 @@ mod tests {
                 </scores>
                 <winner team="ONE"/>
             </data>
-        "#).unwrap()).unwrap(), GameResult::new(
+        "#}).unwrap()).unwrap(), GameResult::new(
             ScoreDefinition::new([
                 ScoreDefinitionFragment::new("Siegpunkte", ScoreAggregation::Sum, true),
                 ScoreDefinitionFragment::new("∅ Punkte", ScoreAggregation::Average, true),

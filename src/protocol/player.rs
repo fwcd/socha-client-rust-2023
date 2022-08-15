@@ -34,16 +34,18 @@ impl TryFrom<&Element> for Player {
 mod tests {
     use std::str::FromStr;
 
+    use indoc::indoc;
+
     use crate::{util::Element, protocol::Player, game::Team};
 
     #[test]
     fn test_from_xml() {
-        assert_eq!(Player::try_from(&Element::from_str(r#"
+        assert_eq!(Player::try_from(&Element::from_str(indoc! {r#"
             <player name="Alice" team="ONE" />
-        "#).unwrap()).unwrap(), Player::new(Some("Alice"), Team::One));
+        "#}).unwrap()).unwrap(), Player::new(Some("Alice"), Team::One));
 
-        assert_eq!(Player::try_from(&Element::from_str(r#"
+        assert_eq!(Player::try_from(&Element::from_str(indoc! {r#"
             <player team="TWO" />
-        "#).unwrap()).unwrap(), Player::new(None, Team::Two));
+        "#}).unwrap()).unwrap(), Player::new(None, Team::Two));
     }
 }

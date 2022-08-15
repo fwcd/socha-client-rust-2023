@@ -197,12 +197,14 @@ impl<C> TryFrom<&Element> for Vec2<C> where C: Copy {
 mod tests {
     use std::str::FromStr;
 
+    use indoc::indoc;
+
     use crate::{util::Element, game::{Vec2, Direct}};
 
     #[test]
     fn test_from_xml() {
-        assert_eq!(Vec2::<Direct>::try_from(&Element::from_str(r#"
+        assert_eq!(Vec2::<Direct>::try_from(&Element::from_str(indoc! {r#"
             <coords x="23" y="0" />
-        "#).unwrap()).unwrap(), Vec2::new(23, 0));
+        "#}).unwrap()).unwrap(), Vec2::new(23, 0));
     }
 }

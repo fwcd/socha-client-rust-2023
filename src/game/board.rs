@@ -147,11 +147,13 @@ impl TryFrom<&Element> for Board {
 mod tests {
     use std::str::FromStr;
 
+    use indoc::indoc;
+
     use crate::{util::Element, game::{Board, Team, Vec2, Field, Direct}};
 
     #[test]
     fn test_from_xml() {
-        assert_eq!(Board::try_from(&Element::from_str(r#"
+        assert_eq!(Board::try_from(&Element::from_str(indoc! {r#"
             <board>
                 <list>
                     <field>3</field>
@@ -234,7 +236,7 @@ mod tests {
                     <field>1</field>
                 </list>
             </board>
-        "#).unwrap()).unwrap(), Board::new([
+        "#}).unwrap()).unwrap(), Board::new([
             3.into(), 2.into(), 1.into(), 1.into(), 4.into(), 3.into(), 2.into(), 3.into(),
             3.into(), 2.into(), 2.into(), 3.into(), 1.into(), 1.into(), 2.into(), 1.into(),
             1.into(), 2.into(), 2.into(), 1.into(), 1.into(), 2.into(), 1.into(), 1.into(),
@@ -253,16 +255,16 @@ mod tests {
         board[Vec2::<Direct>::new(1, 0)] = Field::with_penguin(Team::One);
         board[Vec2::<Direct>::new(1, 1)] = Field::with_penguin(Team::Two);
 
-        assert_eq!(board.to_string(), [
-            "0R000000",
-            "0B000000",
-            "00300000",
-            "00000000",
-            "00000000",
-            "00000000",
-            "00000000",
-            "00000000"
-        ].map(|s| format!("{}\n", s)).concat());
+        assert_eq!(board.to_string(), indoc! {r#"
+            0R000000
+            0B000000
+            00300000
+            00000000
+            00000000
+            00000000
+            00000000
+            00000000
+        "#});
 
         assert_eq!(board.to_string().parse::<Board>().unwrap(), board);
     }

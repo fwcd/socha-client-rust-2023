@@ -160,11 +160,13 @@ impl TryFrom<&Element> for State {
 mod tests {
     use std::str::FromStr;
 
+    use indoc::indoc;
+
     use crate::{util::Element, game::{Board, Team, State, Move, Vec2, Doubled}};
 
     #[test]
     fn test_from_xml() {
-        assert_eq!(State::try_from(&Element::from_str(r#"
+        assert_eq!(State::try_from(&Element::from_str(indoc! {r#"
             <state class="state" turn="1">
                 <startTeam>ONE</startTeam>
                 <board>
@@ -257,7 +259,7 @@ mod tests {
                     <int>0</int>
                 </fishes>
             </state>
-        "#).unwrap()).unwrap(), State {
+        "#}).unwrap()).unwrap(), State {
             board: Board::EMPTY,
             turn: 1,
             fish: [1, 0],

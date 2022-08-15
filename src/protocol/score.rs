@@ -41,15 +41,17 @@ impl TryFrom<&Element> for Score {
 mod tests {
     use std::str::FromStr;
 
+    use indoc::indoc;
+
     use crate::{util::Element, protocol::{Score, ScoreCause}};
 
     #[test]
     fn test_from_xml() {
-        assert_eq!(Score::try_from(&Element::from_str(r#"
+        assert_eq!(Score::try_from(&Element::from_str(indoc! {r#"
             <score cause="LEFT" reason="Player left">
                 <part>0</part>
                 <part>15</part>
             </score>
-        "#).unwrap()).unwrap(), Score::new(ScoreCause::Left, "Player left", [0, 15]));
+        "#}).unwrap()).unwrap(), Score::new(ScoreCause::Left, "Player left", [0, 15]));
     }
 }
