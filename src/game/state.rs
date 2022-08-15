@@ -267,4 +267,31 @@ mod tests {
             start_team: Team::One,
         });
     }
+
+    #[test]
+    fn test_possible_moves() {
+        let board = indoc! {r#"
+            00000000
+            0000000R
+            00000B00
+            0B000000
+            10R0R102
+            00010000
+            001000B0
+            1R0100B0
+        "#}.parse::<Board>().unwrap();
+        let state = State {
+            board,
+            turn: 57,
+            fish: [10, 20], // Irrelevant
+            last_move: None, // Irrelevant
+            start_team: Team::One,
+        };
+        assert_eq!(state.possible_moves(), vec![
+            Move::between(Vec2::<Doubled>::new(8, 4), Vec2::<Doubled>::new(10, 4)),
+            Move::between(Vec2::<Doubled>::new(8, 4), Vec2::<Doubled>::new(7, 5)),
+            Move::between(Vec2::<Doubled>::new(3, 7), Vec2::<Doubled>::new(4, 6)),
+            Move::between(Vec2::<Doubled>::new(3, 7), Vec2::<Doubled>::new(1, 7)),
+        ]);
+    }
 }
