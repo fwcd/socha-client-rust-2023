@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 use arrayvec::ArrayVec;
 
 use crate::util::{Element, Error, Result};
@@ -74,6 +76,24 @@ impl State {
     /// Whether the current team has placed all of its penguins.
     pub fn penguins_placed(&self) -> bool {
         self.current_pieces().count() == PENGUINS_PER_TEAM
+    }
+
+    /// Whether the game is over.
+    pub fn is_over(&self) -> bool {
+        self.immovable(None)
+    }
+
+    /// Fetches the winner, if any.
+    pub fn winner(&self) -> Option<Team> {
+        if self.is_over() {
+            match self.fish[0].cmp(&self.fish[1]) {
+                Ordering::Equal => None,
+                Ordering::Greater => Some(Team::One),
+                Ordering::Less => Some(Team::Two),
+            }
+        } else {
+            None
+        }
     }
 
     /// Fetches the possible moves.
